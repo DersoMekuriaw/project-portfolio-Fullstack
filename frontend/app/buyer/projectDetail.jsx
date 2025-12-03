@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const Home = () => {
+const projectDetail = () => {
   return (
     <View>
-      <Text>this is developer home screen</Text>
+      <Text>this is project detail screen</Text>
     </View>
   )
 }
 
-export default Home
+export default projectDetail;

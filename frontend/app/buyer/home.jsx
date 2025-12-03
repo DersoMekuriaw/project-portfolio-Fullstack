@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const UploadProject = () => {
+const home = () => {
   return (
     <View>
-      <Text>this is upload project screen</Text>
+      <Text>this is developer home screen</Text>
     </View>
   )
 }
 
-export default UploadProject
+export default home

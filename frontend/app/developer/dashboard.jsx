@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const ProjectDetail = () => {
+const dashboard = () => {
   return (
     <View>
-      <Text>this is project detail screen</Text>
+      <Text>this is developer dashboard screen</Text>
     </View>
   )
 }
 
-export default ProjectDetail
+export default dashboard
