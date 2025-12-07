@@ -16,7 +16,7 @@ const home = () => {
 
         {/* Logout Button */}
         <TouchableOpacity style={styles.logoutBtn}>
-          <Ionicons name="log-out-outline" size={28} color="#ff4444" />
+          <Ionicons name="log-out-outline" size={28} />
         </TouchableOpacity>
       </View>
     </View>
