@@ -4,7 +4,7 @@ import React from 'react'
 const register = () => {
   return (
     <View>
-      <Text>this is register screen</Text>
+      <Text>register page developed by beza</Text>
     </View>
   )
 }
