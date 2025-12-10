@@ -4,7 +4,7 @@ import React from 'react'
 const projectDetail = () => {
   return (
     <View>
-      <Text>this is project detail screen</Text>
+      <Text>this is project detail page</Text>
     </View>
   )
 }
