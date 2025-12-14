@@ -20,7 +20,6 @@ export default function RegisterScreen() {
   const [message, setMessage] = useState(""); // backend message
 
   return (
-<<<<<<< HEAD
     <View style={styles.container}>
       <Text style={styles.title}>Create Account</Text>
 
@@ -73,17 +72,13 @@ export default function RegisterScreen() {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.btn}>
+      <TouchableOpacity  style={styles.btn}>
         <Text style={styles.btnText}>Register</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => router.push("/auth/login")}>
         <Text style={styles.loginLink}>Already have an account? Login</Text>
       </TouchableOpacity>
-=======
-    <View>
-      <Text>this is register screen which is developed by beza</Text>
->>>>>>> 46a8c2fcdd356b3a803841d89ba7e47ede44618f
     </View>
   );
 }
