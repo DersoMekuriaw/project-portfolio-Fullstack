@@ -4,7 +4,7 @@ import React from 'react'
 const login = () => {
   return (
     <View>
-      <Text>this is login screen</Text>
+      <Text>this is login screen which is build by bezu</Text>
     </View>
   )
 }
