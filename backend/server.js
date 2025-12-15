@@ -1,10 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/auth");
-// const projectRoutes = require("./routes/projects");
+const projectRoutes = require("./routes/projects");
 
 const app = express();
 
@@ -19,10 +20,13 @@ app.use(cors());
 // ------------------------------
 app.use(express.json());
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 // ------------------------------
 // 3. Routes
 // ------------------------------
 app.use("/api/auth", authRoutes);
+app.use("/api/projects", projectRoutes);
 
 // ------------------------------
 // 4. Connect DB + start server
