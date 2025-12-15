@@ -19,6 +19,30 @@ export default function RegisterScreen() {
   const [role, setRole] = useState("developer"); // default role
   const [message, setMessage] = useState(""); // backend message
 
+  const handleRegister = async () => {
+      if (!name || !email || !password) {
+        setMessage("Please fill all fields!");
+        return;
+      }
+  
+      try {
+        const res = await registerUser({ name, email, password, role });
+        // backend should return { message: "..." }
+        if (res.status === 201 || res.status === 200) {
+          setMessage(res.data.message || "Registration successful!");
+          // optionally navigate after a short delay
+          setTimeout(() => router.push("/auth/login"), 1500);
+        } else {
+          setMessage(res.data.message || "Registration failed. Try again.");
+        }
+      } catch (error) {
+        console.error(error);
+        setMessage(
+          error.response?.data?.message || "Error during registration. Try again."
+        );
+      }
+    };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create Account</Text>
@@ -72,7 +96,7 @@ export default function RegisterScreen() {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity  style={styles.btn}>
+      <TouchableOpacity onPress={handleRegister} style={styles.btn}>
         <Text style={styles.btnText}>Register</Text>
       </TouchableOpacity>
 

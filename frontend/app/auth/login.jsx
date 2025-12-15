@@ -7,6 +7,8 @@ import {
   StyleSheet,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { loginUser } from "../../services/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -14,6 +16,45 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(""); // backend messages
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setMessage("Please fill all fields!");
+      return;
+    }
+
+    try {
+      const res = await loginUser({ email, password });
+      // backend should return { token, role, message }
+      if (res.status === 200) {
+        const { token, user, message: msg } = res.data;
+        // Save everything you will need later
+        await AsyncStorage.multiSet([
+          ["token", token],
+          ["role", user.role],
+          ["userId", user.id], // ← THIS LINE WAS MISSING!!!
+          ["user", JSON.stringify(user)], // ← Bonus: save full user (recommended)
+        ]);
+
+        console.log(res.data);
+
+        setMessage(msg || "Login successful!");
+
+        setTimeout(() => {
+          if (user.role === "developer") {
+            router.push("/developer/dashboard");
+          } else if (user.role === "buyer") {
+            router.push("/buyer/home");
+          }
+        }, 1000);
+      }
+    } catch (error) {
+      console.error(error);
+      setMessage(
+        error.response?.data?.message || "Error during login. Try again."
+      );
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -37,7 +78,7 @@ export default function LoginScreen() {
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.btn}>
+      <TouchableOpacity onPress={handleLogin} style={styles.btn}>
         <Text style={styles.btnText}>Login</Text>
       </TouchableOpacity>
 
