@@ -10,6 +10,8 @@ import {
   StyleSheet,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 export default function UploadProject() {
   const [title, setTitle] = useState("");
@@ -17,6 +19,8 @@ export default function UploadProject() {
   const [price, setPrice] = useState("");
   const [imageUri, setImageUri] = useState(null);
   const [message, setMessage] = useState("");
+
+  
 
   /* ================= PICK IMAGE ================= */
   const pickImage = async () => {
@@ -31,6 +35,63 @@ export default function UploadProject() {
   };
 
   /* ================= UPLOAD ================= */
+  const uploadImage = async () => {
+    
+const token = await AsyncStorage.getItem("token");
+
+    if (!title || !imageUri) {
+      setMessage("Title and screenshot are required");
+      return;
+    }
+
+    setMessage("");
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("price", price);
+
+    if (Platform.OS === "web") {
+      const response = await fetch(imageUri.uri);
+      const blob = await response.blob();
+
+      const file = new File([blob], "screenshot.jpg", {
+        type: blob.type || "image/jpeg",
+      });
+
+      formData.append("screenshot", file);
+    } else {
+      formData.append("screenshot", {
+        uri: imageUri.uri,
+        name: "screenshot.jpg",
+        type: "image/jpeg",
+      });
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/api/projects/create", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // <-- IMPORTANT
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+      console.log(data);
+
+      Alert.alert("Success", "Project uploaded successfully");
+
+      // reset form
+      setTitle("");
+      setDescription("");
+      setPrice("");
+      setImageUri(null);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "Upload failed");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -79,7 +140,7 @@ export default function UploadProject() {
         </View>
       )}
 
-<TouchableOpacity style={styles.btn}>
+      <TouchableOpacity style={styles.btn} onPress={uploadImage}>
         <Text style={styles.btnText}>Upload Project</Text>
       </TouchableOpacity>
     </View>
