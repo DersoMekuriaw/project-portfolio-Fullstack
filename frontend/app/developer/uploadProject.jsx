@@ -69,7 +69,7 @@ const token = await AsyncStorage.getItem("token");
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/projects/create", {
+      const res = await fetch("http://localhost:4000/api/projects/create", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`, // <-- IMPORTANT
