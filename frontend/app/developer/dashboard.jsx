@@ -20,6 +20,36 @@ export default function DeveloperDashboard() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
+console.log(projects)
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const userId = await AsyncStorage.getItem("userId");
+
+      if (!token) {
+        router.replace("/auth/login");
+        return;
+      }
+
+      const res = await getDeveloperProjects(userId, token);
+
+      if (res.status === 200 || res.status === 201) {
+        setProjects(res.data || []);
+      } else {
+        setMessage(res.data?.message || "No projects found.");
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      setMessage("Failed to load projects.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // FULLY WORKING LOGOUT – This works 100%
   const handleLogout = () => {
     Alert.alert(
@@ -47,6 +77,7 @@ export default function DeveloperDashboard() {
       { cancelable: true }
     );
   };
+
   return (
     <View style={styles.container}>
       {/* Header with Title + Logout Icon */}
@@ -87,6 +118,7 @@ export default function DeveloperDashboard() {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

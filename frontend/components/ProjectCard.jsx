@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+const BASE_URL = "http://localhost:4000";
 
 export default function ProjectCard({ project }) {
   const router = useRouter();
-  console.log(project)
 
   return (
     <TouchableOpacity
@@ -19,7 +19,7 @@ export default function ProjectCard({ project }) {
       {/* PROJECT IMAGE */}
       {project.screenshot && project.screenshot.length > 0 ? (
         <Image
-          source={{ uri: project.screenshot }}
+          source={{ uri: `${BASE_URL}${project.screenshot}` }}
           style={styles.image}
           resizeMode="cover"
         />
