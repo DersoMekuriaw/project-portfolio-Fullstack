@@ -23,7 +23,7 @@ exports.createProject = async (req, res) => {
       description,
       price,
       screenshot: imageUrl,
-      // developerId: req.user.id (later)
+      developerId: req.user.id
     });
 
     res.status(201).json({

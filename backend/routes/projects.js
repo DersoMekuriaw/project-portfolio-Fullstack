@@ -2,12 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 const projectCtrl = require("../controllers/projectController");
-// const { verifyToken } = require("../middlewares/auth");
+const { verifyToken } = require("../middlewares/auth");
 const upload = require("../middlewares/upload");
 
 router.post(
   "/create",
-  // verifyToken,
+  verifyToken,
   upload.single("screenshot"),
   projectCtrl.createProject
 );
