@@ -11,7 +11,7 @@ export default function ProjectCard({ project }) {
       style={styles.card}
       onPress={() =>
         router.push({
-          pathname: "/buyer/projectDetails",
+          pathname: "/buyer/projectDetail",
           params: { id: project._id },
         })
       }
