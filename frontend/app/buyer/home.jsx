@@ -7,6 +7,7 @@ import {
   TextInput,
   FlatList,
   ActivityIndicator,
+  Pressable ,
   TouchableOpacity,
   Alert,
 } from "react-native";
@@ -49,36 +50,57 @@ export default function BuyerHome() {
   useEffect(() => {
     fetchProjects();
   }, []);
+  
   // LOGOUT FUNCTION
   const handleLogout = async () => {
-    Alert.alert(
-      "Logout",
-      "Are you sure you want to logout?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Logout",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              // 1. Remove token + any saved data
-              await AsyncStorage.multiRemove(["token", "userRole", "userId"]);
+    const isWeb = typeof window !== "undefined";
 
-              // 2. THIS IS THE ONLY COMBO THAT WORKS 100%
-              router.dismissAll(); // Clears ALL previous screens
-              router.replace("/"); // Go to public home
+    let confirmLogout = true;
 
-              // Optional: tiny delay if still buggy (very rare)
-              // setTimeout(() => router.replace("/"), 100);
-            } catch (error) {
-              console.log("Logout failed:", error);
-            }
+    if (isWeb) {
+      confirmLogout = window.confirm("Are you sure you want to logout?");
+    } else {
+      // Mobile: use Alert.alert
+      Alert.alert(
+        "Logout",
+        "Are you sure you want to logout?",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Logout",
+            style: "destructive",
+            onPress: async () => {
+              await performLogout();
+            },
           },
-        },
-      ],
-      { cancelable: true }
-    );
+        ],
+        { cancelable: true }
+      );
+      return; // exit, mobile handles separately
+    }
+
+    if (confirmLogout) {
+      await performLogout();
+    }
   };
+
+  // Separate function to handle actual logout
+  const performLogout = async () => {
+    try {
+      await AsyncStorage.multiRemove(["token", "userRole", "userId"]);
+
+      if (typeof window !== "undefined") {
+        window.location.href = "/";
+      } else {
+        router.replace("/");
+      }
+    } catch (error) {
+      console.log("Logout failed:", error);
+    }
+  };
+
+
+
 
   const handleSearch = (text) => {
     setSearch(text);

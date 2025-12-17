@@ -51,32 +51,52 @@ console.log(projects)
   };
 
   // FULLY WORKING LOGOUT – This works 100%
-  const handleLogout = () => {
-    Alert.alert(
-      "Logout",
-      "Are you sure you want to logout?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Logout",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              // Remove all auth data
-              await AsyncStorage.multiRemove(["token", "userId", "userRole"]);
+   const handleLogout = async () => {
+     const isWeb = typeof window !== "undefined";
 
-              // THIS IS THE ONLY COMBO THAT WORKS RELIABLY
-              router.dismissAll(); // Clears entire navigation history
-              router.replace("/"); // Go to public landing page
-            } catch (error) {
-              console.log("Logout error:", error);
-            }
-          },
-        },
-      ],
-      { cancelable: true }
-    );
-  };
+     let confirmLogout = true;
+
+     if (isWeb) {
+       confirmLogout = window.confirm("Are you sure you want to logout?");
+     } else {
+       // Mobile: use Alert.alert
+       Alert.alert(
+         "Logout",
+         "Are you sure you want to logout?",
+         [
+           { text: "Cancel", style: "cancel" },
+           {
+             text: "Logout",
+             style: "destructive",
+             onPress: async () => {
+               await performLogout();
+             },
+           },
+         ],
+         { cancelable: true }
+       );
+       return; // exit, mobile handles separately
+     }
+
+     if (confirmLogout) {
+       await performLogout();
+     }
+   };
+
+   // Separate function to handle actual logout
+   const performLogout = async () => {
+     try {
+       await AsyncStorage.multiRemove(["token", "userRole", "userId"]);
+
+       if (typeof window !== "undefined") {
+         window.location.href = "/";
+       } else {
+         router.replace("/");
+       }
+     } catch (error) {
+       console.log("Logout failed:", error);
+     }
+   };
 
   return (
     <View style={styles.container}>
