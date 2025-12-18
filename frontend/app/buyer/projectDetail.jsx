@@ -4,9 +4,9 @@ import React from 'react'
 const projectDetail = () => {
   return (
     <View>
-      <Text>this is project detail </Text>
+      <Text>projectDetail</Text>
     </View>
   )
 }
 
-export default projectDetail;
+export default projectDetail

@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getDeveloperProjects } from "../../services/api";
+import { getDeveloperProjects, deleteProject } from "../../services/api";
 import ProjectCard from "../../components/ProjectCard";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -19,8 +19,6 @@ export default function DeveloperDashboard() {
   const [projects, setProjects] = useState([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
-
-console.log(projects)
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -49,6 +47,39 @@ console.log(projects)
       setLoading(false);
     }
   };
+
+const handleDelete = async (projectId) => {
+  Alert.alert(
+    "Delete Project",
+    "Are you sure you want to delete this project?",
+    [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            const token = await AsyncStorage.getItem("token");
+            await deleteProject(projectId, token);
+
+            // remove from UI instantly
+            setProjects((prev) => prev.filter((p) => p._id !== projectId));
+          } catch (error) {
+            Alert.alert("Error", "Failed to delete project");
+          }
+        },
+      },
+    ]
+  );
+};
+
+const handleEdit = (project) => {
+  router.push({
+    pathname: "/developer/editProject",
+    params: { project: JSON.stringify(project) },
+  });
+};
+
 
   // FULLY WORKING LOGOUT – This works 100%
    const handleLogout = async () => {
@@ -128,9 +159,14 @@ console.log(projects)
         <FlatList
           data={projects}
           keyExtractor={(item) => item._id}
-          renderItem={({ item }) => <ProjectCard project={item} />}
-          contentContainerStyle={{ paddingBottom: 100 }}
-          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <ProjectCard
+              project={item}
+              isOwner={true}
+              onEdit={() => handleEdit(item)}
+              onDelete={() => handleDelete(item._id)}
+            />
+          )}
         />
       ) : (
         <Text style={styles.noProjects}>No projects uploaded yet.</Text>
