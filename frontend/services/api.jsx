@@ -1,34 +1,31 @@
 import axios from "axios";
 
-// Set the base URL to your backend
+// Axios instance
 export const API = axios.create({
-  baseURL: "http://localhost:4000/api", // base points to /api
+  baseURL: "http://localhost:4000/api",
 });
 
-// Auth endpoints
+// Auth
 export const registerUser = (data) => API.post("/auth/register", data);
 export const loginUser = (data) => API.post("/auth/login", data);
 
-// Project endpoints
-// Upload project with FormData
-
-// export const createProject = async (formData, token) => {
-//   const res = await fetch("http://localhost:4000/api/projects/create", {
-//     method: "POST",
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//       // ❌ DO NOT manually set Content-Type
-//     },
-//     body: formData,
-//   });
-
-//   return res;
-// };
-
+// Projects
 export const getAllProjects = () => API.get("/projects/all");
 export const getProjectById = (id) => API.get(`/projects/${id}`);
 
 export const getDeveloperProjects = (devId, token) =>
   API.get(`/projects/developer/${devId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+// ✅ DELETE
+export const deleteProject = (projectId, token) =>
+  API.delete(`/projects/${projectId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+// ✅ UPDATE
+export const updateProject = (projectId, data, token) =>
+  API.put(`/projects/${projectId}`, data, {
     headers: { Authorization: `Bearer ${token}` },
   });
