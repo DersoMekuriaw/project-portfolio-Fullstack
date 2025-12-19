@@ -15,7 +15,14 @@ router.post(
 router.get("/all", projectCtrl.getAll);
 router.get("/:id", projectCtrl.getById);
 router.get("/developer/:developerId", projectCtrl.getByDeveloper);
-router.put("/:id", projectCtrl.editProject)
+router.put(
+  "/update/:id",
+  verifyToken,
+  upload.single("screenshot"),
+  projectCtrl.editProject
+);
+
+
 router.delete("/:projectId",verifyToken, projectCtrl.deleteProject);
 
 module.exports = router;

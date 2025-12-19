@@ -75,22 +75,29 @@ exports.getByDeveloper = async (req, res) => {
 
 exports.editProject = async (req, res) => {
   try {
+
+
     const project = await Project.findById(req.params.id);
 
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    // ✅ Ownership check
+    // Ownership check
     if (project.developerId.toString() !== req.user.id) {
       return res.status(403).json({ message: "Not allowed" });
     }
 
     const { title, description, price } = req.body;
 
-    project.title = title ?? project.title;
-    project.description = description ?? project.description;
-    project.price = price ?? project.price;
+    if (title !== undefined) project.title = title;
+    if (description !== undefined) project.description = description;
+    if (price !== undefined) project.price = price;
+
+    // update image if provided
+    if (req.file) {
+      project.screenshot = `/uploads/${req.file.filename}`;
+    }
 
     await project.save();
 
@@ -99,9 +106,11 @@ exports.editProject = async (req, res) => {
       project,
     });
   } catch (error) {
+    console.error("Edit Project Error:", error);
     res.status(500).json({ message: "Failed to update project" });
   }
 };
+
 
 exports.deleteProject = async (req, res) => {
   try {
@@ -110,6 +119,7 @@ exports.deleteProject = async (req, res) => {
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
+
     // Ownership check
     if (project.developerId.toString() !== req.user.id) {
       return res.status(403).json({ message: "Not allowed" });
