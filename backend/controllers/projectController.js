@@ -105,13 +105,12 @@ exports.editProject = async (req, res) => {
 
 exports.deleteProject = async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id);
+    const project = await Project.findById(req.params.projectId);
 
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
-
-    // ✅ Ownership check
+    // Ownership check
     if (project.developerId.toString() !== req.user.id) {
       return res.status(403).json({ message: "Not allowed" });
     }
@@ -120,6 +119,7 @@ exports.deleteProject = async (req, res) => {
 
     res.status(200).json({ message: "Project deleted successfully" });
   } catch (error) {
+    console.error("Delete Project Error:", error);
     res.status(500).json({ message: "Failed to delete project" });
   }
 };
