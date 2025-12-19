@@ -5,18 +5,14 @@ import { Ionicons } from "@expo/vector-icons";
 
 const BASE_URL = "http://localhost:4000";
 
-export default function ProjectCard({
-  project,
-  isOwner = false,
-  onEdit,
-  onDelete,
-}) {
+export default function ProjectCard({ project, isOwner, onEdit, onDelete }) {
   const router = useRouter();
 
   return (
     <View style={styles.card}>
-      {/* CLICKABLE AREA */}
+      {/* IMAGE + CONTENT CLICK */}
       <TouchableOpacity
+        activeOpacity={0.8}
         onPress={() =>
           router.push({
             pathname: "/buyer/projectDetail",
@@ -24,7 +20,6 @@ export default function ProjectCard({
           })
         }
       >
-        {/* IMAGE */}
         {project.screenshot ? (
           <Image
             source={{ uri: `${BASE_URL}${project.screenshot}` }}
@@ -36,7 +31,6 @@ export default function ProjectCard({
           </View>
         )}
 
-        {/* TEXT */}
         <View style={styles.textBox}>
           <Text style={styles.title}>{project.title}</Text>
           <Text style={styles.description} numberOfLines={2}>
@@ -49,11 +43,11 @@ export default function ProjectCard({
       {/* OWNER ACTIONS */}
       {isOwner && (
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.editBtn} onPress={onEdit}>
+          <TouchableOpacity onPress={onEdit} style={styles.editBtn}>
             <Ionicons name="create-outline" size={20} color="#fff" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.deleteBtn} onPress={onDelete}>
+          <TouchableOpacity onPress={onDelete} style={styles.deleteBtn}>
             <Ionicons name="trash-outline" size={20} color="#fff" />
           </TouchableOpacity>
         </View>

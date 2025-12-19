@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -49,28 +50,48 @@ export default function DeveloperDashboard() {
   };
 
 const handleDelete = async (projectId) => {
-  Alert.alert(
-    "Delete Project",
-    "Are you sure you want to delete this project?",
-    [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            const token = await AsyncStorage.getItem("token");
-            await deleteProject(projectId, token);
+  const isWeb = Platform.OS === "web";
 
-            // remove from UI instantly
-            setProjects((prev) => prev.filter((p) => p._id !== projectId));
-          } catch (error) {
-            Alert.alert("Error", "Failed to delete project");
-          }
+  if (isWeb) {
+    // Web: use window.confirm
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this project?"
+    );
+    if (!confirmed) return;
+
+    try {
+      const token = await AsyncStorage.getItem("token");
+      await deleteProject(projectId, token);
+
+      setProjects((prev) => prev.filter((p) => p._id !== projectId));
+    } catch (error) {
+      alert("Failed to delete project");
+      console.error(error);
+    }
+  } else {
+    // Mobile: use Alert.alert
+    Alert.alert(
+      "Delete Project",
+      "Are you sure you want to delete this project?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem("token");
+              await deleteProject(projectId, token);
+
+              setProjects((prev) => prev.filter((p) => p._id !== projectId));
+            } catch (error) {
+              Alert.alert("Error", "Failed to delete project");
+            }
+          },
         },
-      },
-    ]
-  );
+      ]
+    );
+  }
 };
 
 const handleEdit = (project) => {

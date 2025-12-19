@@ -16,6 +16,6 @@ router.get("/all", projectCtrl.getAll);
 router.get("/:id", projectCtrl.getById);
 router.get("/developer/:developerId", projectCtrl.getByDeveloper);
 router.put("/:id", projectCtrl.editProject)
-router.delete("/:projectId", projectCtrl.deleteProject);
+router.delete("/:projectId",verifyToken, projectCtrl.deleteProject);
 
 module.exports = router;
