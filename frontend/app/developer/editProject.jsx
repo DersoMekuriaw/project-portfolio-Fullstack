@@ -54,15 +54,12 @@ export default function EditProject() {
       formData.append("description", description);
       formData.append("price", price);
 
-      // only attach image if changed
+      // attach image only if changed
       if (imageUri && imageUri.uri && !imageUri.uri.startsWith("http")) {
         if (Platform.OS === "web") {
           const response = await fetch(imageUri.uri);
           const blob = await response.blob();
-          const file = new File([blob], "screenshot.jpg", {
-            type: blob.type || "image/jpeg",
-          });
-          formData.append("screenshot", file);
+          formData.append("screenshot", blob, "screenshot.jpg");
         } else {
           formData.append("screenshot", {
             uri: imageUri.uri,
@@ -77,22 +74,28 @@ export default function EditProject() {
         {
           method: "PUT",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // ✅ NO Content-Type here
           },
           body: formData,
         }
       );
 
-      await res.json();
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Update failed");
+      }
 
       Alert.alert("Success", "Project updated successfully");
       router.back();
     } catch (error) {
-      Alert.alert("Error", "Update failed");
+      console.error("Update Error:", error);
+      Alert.alert("Error", error.message || "Update failed");
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <View style={styles.container}>
